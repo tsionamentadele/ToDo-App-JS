@@ -2,46 +2,67 @@ const taskInput = document.querySelector("#task");
 const addBtn = document.querySelector("#add");
 const taskList = document.querySelector("#task-list");
 
-// --- Utility function to create a task element ---
-function createTaskElement(taskValue) {
-  const li = document.createElement("li");
-  const span = document.createElement("span");
-  const deleteBtn = document.createElement("button");
+// --- Model: data handling ---
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-  span.textContent = taskValue;
-  deleteBtn.textContent = "Delete";
-  deleteBtn.classList.add("delete_task");
-
-  // Append children
-  li.append(span, deleteBtn);
-
-  // Event: Mark complete
-  span.addEventListener("click", () => {
-    span.classList.toggle("done");
-  });
-
-  // Event: Delete task
-  deleteBtn.addEventListener("click", (e) => {
-    e.stopPropagation(); // prevent strike-through
-    li.remove();
-  });
-
-  return li;
+// Save to localStorage
+function saveTasks() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
-// --- Add new task ---
-function addTask() {
-  const value = taskInput.value.trim();
-  if (!value) return;
+// --- View: render logic ---
+function renderTasks() {
+  taskList.innerHTML = ""; // clear UI
+  tasks.forEach((task, index) => {
+    const li = document.createElement("li");
 
-  const taskItem = createTaskElement(value);
-  taskList.append(taskItem);
+    const span = document.createElement("span");
+    span.textContent = task.text;
+    if (task.done) span.classList.add("done");
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Delete";
+    deleteBtn.classList.add("delete_task");
+
+    li.append(span, deleteBtn);
+    taskList.append(li);
+
+    // --- Event bindings ---
+    span.addEventListener("click", () => toggleTask(index));
+    deleteBtn.addEventListener("click", () => deleteTask(index));
+  });
+}
+
+// --- Controller: interactions ---
+function addTask() {
+  const text = taskInput.value.trim();
+  if (!text) return;
+
+  tasks.push({ text, done: false });
+  saveTasks();
+  renderTasks();
 
   taskInput.value = "";
   taskInput.focus();
 }
 
+function deleteTask(index) {
+  tasks.splice(index, 1);
+  saveTasks();
+  renderTasks();
+}
+
+function toggleTask(index) {
+  tasks[index].done = !tasks[index].done;
+  saveTasks();
+  renderTasks();
+}
+
+// --- Event listeners ---
 addBtn.addEventListener("click", addTask);
 taskInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") addTask();
 });
+
+// --- Initial render ---
+renderTasks();
