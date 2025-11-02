@@ -1,0 +1,39 @@
+body{
+    background-color: antiquewhite;
+    display: flex;
+    justify-content: center;
+    padding-top: 100px;font-family: sans-serif;
+}
+.todo-container{
+    background-color: aliceblue;
+    width: 300px;
+    padding: 2em;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+input{
+    border: none;
+    padding: 10px;
+}
+button{
+    border: none;
+    padding: 10px;
+}
+#add{
+    background-color: rgb(34, 169, 34);
+    color: white;
+    border-radius: 5px;
+    font-weight: 500;
+}
+ul#task-list{
+    list-style: none;
+    padding: 0;    
+}
+#task-list li{
+    width: 250px;
+    background-color: beige;
+    padding: 5px;
+}
