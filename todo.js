@@ -1,43 +1,47 @@
-const task=document.querySelector("#task")
-const add=document.querySelector("#add")
-const taskList=document.querySelector("#task-list")
-const li=document.querySelector("li")
+const taskInput = document.querySelector("#task");
+const addBtn = document.querySelector("#add");
+const taskList = document.querySelector("#task-list");
 
-add.addEventListener("click",()=>{
-    if(task.value.trim()==""){
-       return
-    }
-    let task_value=task.value.trim()
-    let li=document.createElement("li")
-    let delete_task=document.createElement("button")
-    delete_task.textContent="Delete"
-    delete_task.classList.add("delete_task")
+// --- Utility function to create a task element ---
+function createTaskElement(taskValue) {
+  const li = document.createElement("li");
+  const span = document.createElement("span");
+  const deleteBtn = document.createElement("button");
 
-    const span = document.createElement("span");
-    span.textContent = task_value;
+  span.textContent = taskValue;
+  deleteBtn.textContent = "Delete";
+  deleteBtn.classList.add("delete_task");
 
-    li.append(span);
-    li.append(delete_task);
-    taskList.append(li);
+  // Append children
+  li.append(span, deleteBtn);
 
+  // Event: Mark complete
+  span.addEventListener("click", () => {
+    span.classList.toggle("done");
+  });
 
-    task.value = "";
-    task.focus();
+  // Event: Delete task
+  deleteBtn.addEventListener("click", (e) => {
+    e.stopPropagation(); // prevent strike-through
+    li.remove();
+  });
 
-    delete_task.addEventListener("click",()=>{
-        li.remove()
-    })
+  return li;
+}
 
-})
-task.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") add.click();
+// --- Add new task ---
+function addTask() {
+  const value = taskInput.value.trim();
+  if (!value) return;
+
+  const taskItem = createTaskElement(value);
+  taskList.append(taskItem);
+
+  taskInput.value = "";
+  taskInput.focus();
+}
+
+addBtn.addEventListener("click", addTask);
+taskInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") addTask();
 });
-
-taskList.addEventListener("click", (e) => {
-  const target = e.target;
-  if (target.tagName === "SPAN") {
-    target.classList.toggle("done"); 
-  }
-});
-
-
